@@ -9,6 +9,7 @@ public class Arete {
     private Station sommet2;
     private String nomMetro;
     private Integer tempsEnSecondes;
+    private String ligne;
 
     /**
      * Créer une arete à partir des informations fournies et lie celle-ci à son Station de départ et à son Station de sommet2
@@ -16,7 +17,7 @@ public class Arete {
      * @param sommet2 : son Station de sommet2
      * @param tempsEnSecondes : tempsEnSecondes de l'arete
      */
-    public Arete(Station sommet1, Station sommet2, Integer tempsEnSecondes) {
+    public Arete(Station sommet1, Station sommet2, Integer tempsEnSecondes, String ligne) {
         this.id = compteur;
         compteur++;
         this.sommet1 = sommet1;
@@ -24,6 +25,7 @@ public class Arete {
         this.tempsEnSecondes = tempsEnSecondes;
         this.sommet2.ajouterArete(this);
         this.sommet1.ajouterArete(this);
+        this.ligne = ligne;
     }
 
     /**
@@ -40,6 +42,10 @@ public class Arete {
         this.tempsEnSecondes = 0;
         this.sommet2.ajouterArete(this);
         this.sommet1.ajouterArete(this);
+    }
+
+    public String getLigne() {
+        return ligne;
     }
 
     public int getId() {
@@ -84,10 +90,6 @@ public class Arete {
         this.tempsEnSecondes = tempsEnSecondes;
     }
 
-    public void afficher() {
-        System.out.println(this.sommet1.getNom() +  "-" + this.sommet2.getNom());
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(id);
@@ -105,9 +107,9 @@ public class Arete {
         return id == other.id;
     }
 
-    @Override
     public String toString() {
-        return "Arete [id=" + id + ", sommet1=" + sommet1.getNom() + ", sommet2=" + sommet2.getNom() + ", nomMetro="
-                + nomMetro + ", tempsEnSecondes=" + tempsEnSecondes + "]";
+        return "(" + this.getSommet1().getNom() + ")" + "-" + "(" + this.getSommet2().getNom()   + ")[métro " + this.getLigne()+ "]";
+
+
     }
 }
