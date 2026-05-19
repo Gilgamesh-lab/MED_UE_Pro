@@ -28,6 +28,8 @@ public class Main {
         System.out.println(graphe.findStation(16).getNom());
         System.out.println(graphe.findStation("Bastille").getLignes());
         System.out.println(graphe.findStation("Bastille").getAretes());
+        Resultat resultat = graphe.getBFS("Bastille");
+        System.out.println(resultat.getChemin());
 
 
 

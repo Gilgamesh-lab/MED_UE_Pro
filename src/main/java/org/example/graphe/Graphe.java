@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class Graphe {
@@ -52,6 +50,43 @@ public class Graphe {
 
     }
 
+    public void reset() {
+        this.getStations().forEach(sommet -> sommet.setMarquer(false));
+    }
+
+    public Resultat getBFS(String nomPointDepart) {
+        this.reset();
+        Station s = this.getStations().stream().filter(sommet -> sommet.getNom().equals(nomPointDepart)).findFirst().get();
+        String chemin = s.getNom();
+        Graphe grapheBFS = new Graphe();
+        Resultat resultat = new Resultat();
+
+        ArrayList<Station> sommetAVisiter = new ArrayList<Station>();
+        sommetAVisiter.add(s);
+        s.setMarquer(true);
+        Station aVisiter;
+        grapheBFS.addStation(s.getNom());
+
+        while (!sommetAVisiter.isEmpty()) {
+            aVisiter = sommetAVisiter.get(0);
+            sommetAVisiter.remove(0);
+            for (Station voisin : aVisiter.getVoisins()) {
+                if(!voisin.isMarquer()) {
+                    grapheBFS.addStation(voisin.getNom());
+                    new Arete(grapheBFS.getStationParNom(aVisiter.getNom()), grapheBFS.getStationParNom(voisin.getNom()));
+                    sommetAVisiter.add(voisin);
+                    voisin.setMarquer(true);
+                    chemin += "->" + voisin.getNom();
+                }
+            }
+        }
+
+        resultat.setChemin(chemin);
+        resultat.setGraphe(grapheBFS);
+
+        return resultat;
+    }
+
     public boolean stationDejaExistante(String nom_sommet) {
         return stations.stream().anyMatch(station -> station.getNom().equals(nom_sommet));
     }
@@ -94,5 +129,16 @@ public class Graphe {
     }
 
 
+    public void addStation(Station station) {
+        this.stations.add(station);
+    }
+
+    public void addStation(String station) {
+        this.stations.add(new Station(station));
+    }
+
+    public Station getStationParNom(String nom) {
+        return this.getStations().stream().filter(station -> station.getNom().equals(nom)).findFirst().get();
+    }
 }
 

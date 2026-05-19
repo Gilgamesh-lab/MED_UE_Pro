@@ -9,16 +9,17 @@ public class Station {
         
     private String nom;
         private ArrayList<Arete> aretes;
-        private int numero;
+        private ArrayList<Integer> numero;
         private String couleur;
         private boolean marquer;
-        private Integer[] lignes;
+        private String lignes; // lignes est un string à cause de la ligne 7bis
         private boolean si_terminus;
         private int branchement;
 
-        public Station(String nom,int numero, boolean si_terminus,  int branchement, Integer... lignes) {
+        public Station(String nom,int numero, boolean si_terminus,  int branchement, String lignes) {
             this.nom = nom;
-            this.numero = numero;
+            this.numero = new ArrayList<Integer>();
+            this.numero.add(numero) ;
             this.lignes = lignes;
             this.si_terminus = si_terminus;
             this.branchement = branchement;
@@ -26,23 +27,81 @@ public class Station {
             this.aretes = new ArrayList<Arete>();
         }
 
+        public Station(String nom) {
+            this.nom = nom;
+        }
 
-        /**
+    public boolean isSi_terminus() {
+        return si_terminus;
+    }
+
+    public ArrayList<Integer> getNumero() {
+        return numero;
+    }
+
+    public String getLignes() {
+        return lignes;
+    }
+
+    public int getBranchement() {
+        return branchement;
+    }
+
+    public void setNumero(ArrayList<Integer> numero) {
+        this.numero = numero;
+    }
+
+    public void setLignes(String lignes) {
+        this.lignes = lignes;
+    }
+
+    public void addLignes(String lignes) {
+        this.lignes = this.lignes + ", " + lignes;
+    }
+
+    public void setSi_terminus(boolean si_terminus) {
+        this.si_terminus = si_terminus;
+    }
+
+    public void setBranchement(int branchement) {
+        this.branchement = branchement;
+    }
+
+    /**
          * Renvoie la liste des voisin d'un Station par ordre lexicographique
          * @return la liste des voisins
          */
         public ArrayList<Station> getVoisins(){
             ArrayList<Station> voisins = new ArrayList<Station>();
             for (Arete arete : this.aretes) {
-                if(arete.getSommet1() != this) {
+                if(!arete.getSommet1().getNom().equals(this.getNom())) {
                     voisins.add(arete.getSommet1());
                 }
-                else {
+                else if(!arete.getSommet2().getNom().equals(this.getNom())) {
                     voisins.add(arete.getSommet2());
                 }
             }
             voisins.sort(Comparator.comparing(Station -> Station.getNom()));
             return voisins;
+        }
+
+    public ArrayList<Arete> getAretes(){
+        ArrayList<Arete> aretes = new ArrayList<Arete>();
+        for (Arete arete : this.aretes) {
+            if(!arete.getSommet1().getNom().equals(this.getNom())) {
+                aretes.add(arete);
+            }
+            else if(!arete.getSommet2().getNom().equals(this.getNom())) {
+                aretes.add(arete);
+            }
+        }
+        return aretes;
+    }
+
+        public String getLigneVoisin(String nom, String nom2) {
+            return (this.aretes.stream()
+                    .filter(arete -> arete.getSommet1().getNom().equals(nom) || arete.getSommet2().getNom().equals(nom))
+                    .findFirst().get().getLigne());
         }
 
 
@@ -69,9 +128,6 @@ public class Station {
          * Renvoie la liste des arêtes d'un Station par ordre de création
          * @return la liste des arêtes
          */
-        public ArrayList<Arete> getAretes() {
-            return (ArrayList<Arete>) this.aretes.stream().sorted(Comparator.comparingInt(arete -> arete.getId())).collect(Collectors.toList());
-        }
 
         /**
          * Renvoie la liste des arêtes d'un Station 
@@ -114,18 +170,19 @@ public class Station {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Station station = (Station) o;
-        return numero == station.numero && marquer == station.marquer && si_terminus == station.si_terminus && branchement == station.branchement && Objects.equals(nom, station.nom) && Objects.equals(aretes, station.aretes) && Objects.equals(couleur, station.couleur) && Objects.deepEquals(lignes, station.lignes);
+        return Objects.equals(nom, station.nom);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nom, aretes, numero, couleur, marquer, Arrays.hashCode(lignes), si_terminus, branchement);
+        return Objects.hashCode(nom);
     }
 
     @Override
-        public String toString() {
-            return "Station [nom=" + nom ;
-        }
+    public String toString() {
+        return this.getNom();
+
+    }
 
 
 

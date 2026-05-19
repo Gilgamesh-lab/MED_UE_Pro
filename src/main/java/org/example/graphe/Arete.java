@@ -44,6 +44,15 @@ public class Arete {
         this.sommet1.ajouterArete(this);
     }
 
+    public Arete(Station sommet1, Station sommet2) {
+        this.id = compteur;
+        compteur++;
+        this.sommet1 = sommet1;
+        this.sommet2 = sommet2;
+        this.sommet2.ajouterArete(this);
+        this.sommet1.ajouterArete(this);
+    }
+
     public String getLigne() {
         return ligne;
     }
