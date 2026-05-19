@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Graphe {
     private ArrayList<Station> stations;
@@ -85,6 +88,81 @@ public class Graphe {
         resultat.setGraphe(grapheBFS);
 
         return resultat;
+    }
+
+    public ArrayList<Arete> getAretes(){
+        ArrayList<Arete> aretes = new ArrayList<Arete>();
+        this.getStationTrier().stream().forEach(sommet -> sommet.getAretes().stream().forEach(arete -> aretes.add(arete)));
+        return aretes;
+    }
+
+    public ArrayList<Station> getStationTrier() {
+        return (ArrayList<Station>) this.stations.stream().sorted(Comparator.comparing(Station::getNom)).collect(Collectors.toList());
+    }
+
+    public ArrayList<Arete> getAretesSansDoublons(){
+        ArrayList<Arete> aretes = new ArrayList<Arete>();
+        this.getStationTrier().stream().forEach(sommet -> sommet.getAretes().stream().forEach(arete -> aretes.add(arete)));
+        return (ArrayList<Arete>) this.getAretes().stream().distinct().collect(Collectors.toList());
+    }
+
+    private ArrayList<String> getEnsemble (ArrayList<Arete> aretes){
+        ArrayList<String> aretesChoisi = new ArrayList<String>();
+        aretesChoisi.add(aretes.get(0).getSommet1().getNom());
+
+        boolean nouveauSommetDetecter = true;
+        while(nouveauSommetDetecter) {
+            nouveauSommetDetecter = false;
+            for (Arete arete : aretes) {
+                if(!aretesChoisi.contains(arete.getSommet1().getNom()) &&  aretesChoisi.contains(arete.getSommet2().getNom())) {
+                    aretesChoisi.add(arete.getSommet1().getNom());
+                    nouveauSommetDetecter = true;
+                }
+                else if(aretesChoisi.contains(arete.getSommet1().getNom()) &&  !aretesChoisi.contains(arete.getSommet2().getNom())) {
+                    aretesChoisi.add(arete.getSommet2().getNom());
+                    nouveauSommetDetecter = true;
+                }
+            }
+        }
+
+        return aretesChoisi;
+    }
+
+    public ArrayList<Arete> getKruskal() {
+        ArrayList<Arete> aretesTrierParPoids = this.getAretesSansDoublons();
+        aretesTrierParPoids.sort(Comparator.comparingInt(arete -> arete.getTempsEnSecondes()));
+
+        ArrayList<Station> sommetVisiter = new ArrayList<Station>();
+        ArrayList<Arete> aretes = new ArrayList<Arete>();
+
+        while (aretes.size() != (this.getStationTrier().size() - 1)) {
+            Arete arete = null;
+            try {
+                arete = aretesTrierParPoids.stream().filter(arete2 -> !sommetVisiter.contains(arete2.getSommet1()) || !sommetVisiter.contains(arete2.getSommet2()) ).findFirst().get();
+            }
+            catch (NoSuchElementException e) { // cas où deux arbres non connectés se sont crées
+                ArrayList<String> sommets = this.getEnsemble(aretes);
+                for (Arete arete2 : aretesTrierParPoids) {
+                    if(sommets.contains(arete2.getSommet2().getNom()) != sommets.contains(arete2.getSommet1().getNom())){
+                        arete = arete2;
+                        break;
+                    }
+                }
+            }
+
+            if(!sommetVisiter.contains(arete.getSommet1())) {
+                sommetVisiter.add(arete.getSommet1());
+            }
+
+            if(!sommetVisiter.contains(arete.getSommet2())) {
+                sommetVisiter.add(arete.getSommet2());
+            }
+            aretes.add(arete);
+        }
+
+        return aretes;
+
+
     }
 
     public boolean stationDejaExistante(String nom_sommet) {

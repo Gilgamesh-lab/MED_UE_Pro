@@ -6,6 +6,7 @@ import org.example.graphe.Resultat;
 import org.example.graphe.Station;
 
 import java.io.*;
+import java.util.ArrayList;
 
 
 public class Main {
@@ -30,6 +31,21 @@ public class Main {
         System.out.println(graphe.findStation("Bastille").getAretes());
         Resultat resultat = graphe.getBFS("Bastille");
         System.out.println(resultat.getChemin());
+
+        System.out.println("");
+        if(graphe.getStations().stream().allMatch(station -> station.isMarquer())){
+            System.out.println("Le graphe est connexe");
+        }
+        else{
+            System.out.println("Le graphe n'est pas connexe");
+        }
+
+        System.out.println("");
+        System.out.println("");
+        ArrayList<Arete> aretes = graphe.getKruskal();
+        aretes.stream().forEach(arete2 -> System.out.println(arete2.getSommet1().getNom() + " -> " + arete2.getSommet2().getNom() + " (métro " + arete2.getLigne() + ") " + arete2.getTempsEnSecondes() + " secondes"));
+        System.out.println();
+        System.out.println("Poids total du plus court chemin trouvé = " + (aretes.stream().mapToInt(arete2 -> arete2.getTempsEnSecondes()).sum()) / 360 + " heures");
 
 
 

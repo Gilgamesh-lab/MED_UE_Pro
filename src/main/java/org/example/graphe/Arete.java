@@ -7,7 +7,6 @@ public class Arete {
     private static int compteur = 1;
     private Station sommet1;
     private Station sommet2;
-    private String nomMetro;
     private Integer tempsEnSecondes;
     private String ligne;
 
@@ -33,12 +32,12 @@ public class Arete {
      * @param sommet1 : son Station de départ
      * @param sommet2 : son Station de sommet2
      */
-    public Arete(Station sommet1, Station sommet2, String nomMetro) {
+    public Arete(Station sommet1, Station sommet2, String ligne) {
         this.id = compteur;
         compteur++;
         this.sommet1 = sommet1;
         this.sommet2 = sommet2;
-        this.nomMetro = nomMetro;
+        this.ligne = ligne;
         this.tempsEnSecondes = 0;
         this.sommet2.ajouterArete(this);
         this.sommet1.ajouterArete(this);
@@ -65,9 +64,6 @@ public class Arete {
         this.id = id;
     }
 
-    public String getNomMetro() {
-        return nomMetro;
-    }
 
     public Station getSommet1() {
         return sommet1;
@@ -86,9 +82,6 @@ public class Arete {
     }
 
 
-    public void setNomMetro(String nomMetro) {
-        this.nomMetro = nomMetro;
-    }
 
     public Integer getTempsEnSecondes() {
         return tempsEnSecondes;
