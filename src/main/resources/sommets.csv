@@ -126,7 +126,7 @@ num_sommet; nom_sommet; numéro_ligne; si_terminus; branchement (0 stations en c
 124; Gare du Nord ;4 ;False; 0
 125; Gare du Nord ;5 ;False; 0
 126; Garibaldi ;13 ;False; 1
-127; George  ;1 ;False; 0
+127; George V  ;1 ;False; 0
 128; Glacière ;6 ;False; 0
 129; Goncourt ;11 ;False; 0
 130; Grande Arche de la Défense ;1 ;True; 0
@@ -276,7 +276,7 @@ num_sommet; nom_sommet; numéro_ligne; si_terminus; branchement (0 stations en c
 274; Porte de Versailles ;12 ;False; 0
 275; Porte de Vincennes ;1 ;False; 0
 276; Porte de la Chapelle ;12 ;True; 0
-277; Porte de la illette ;7 ;False; 0
+277; Porte de la Villette ;7 ;False; 0
 278; Porte des Lilas ;11 ;False; 0
 279; Porte des Lilas ;3bis ;True; 0
 280; Pré-Saint-Gervais ;7bis ;True; 0
@@ -371,7 +371,7 @@ num_sommet; nom_sommet; numéro_ligne; si_terminus; branchement (0 stations en c
 369; Voltaire ;9 ;False; 0
 370; Wagram ;3 ;False; 0
 371; École Militaire ;8 ;False; 0
-372; École étérinaire de Maisons-Alfort ;8 ;False; 0
+372; École Vétérinaire de Maisons-Alfort ;8 ;False; 0
 373; Église d'Auteuil ;10 ;False; 0
 374; Église de Pantin ;5 ;False; 0
 375; Étienne Marcel ;4 ;False; 0

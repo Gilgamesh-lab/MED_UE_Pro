@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Graphe {
@@ -19,10 +16,21 @@ public class Graphe {
         this.lignes = new ArrayList<>();
         this.loadCsv("/sommets.csv");
         this.loadCsv("/aretes.csv");
+        this.loadCsv("/pospoints.csv");
     }
 
     public ArrayList<Station> getStations() {
         return stations;
+    }
+
+    public void loadPosition(String[] parts){
+        final int x = Integer.parseInt(parts[0].strip());
+        final int y = Integer.parseInt(parts[1].strip());
+        final String nom = parts[2].strip();
+        Station station = findStation(nom);
+        station.setX(x);
+        station.setY(y);
+
     }
 
     private void loadAretes(String[] parts) {
@@ -165,6 +173,63 @@ public class Graphe {
 
     }
 
+    public Resultat getDijkstra(String villeDeDepart, String villeDArrive) {
+        this.reset();
+        Station depart = this.getStationTrier().stream().filter(sommet -> sommet.getNom().equals(villeDeDepart)).findFirst().get();
+        Station sommet = depart;
+        HashMap<String, Integer> distanceMinimale = new HashMap<String, Integer>();
+        HashMap<String, Station> predecesseur = new HashMap<String, Station>();
+
+        int infinie = Integer.MAX_VALUE / 10000; // représente la valeur infinie
+
+        for (Station s : this.getStationTrier() ) {
+            if(s == depart){
+                distanceMinimale.put(s.getNom(), 0);
+            }
+            else {
+                distanceMinimale.put(s.getNom(), infinie);
+                predecesseur.put(s.getNom(), null);
+            }
+        }
+
+        while(this.getStationTrier().stream().anyMatch(s -> !s.isMarquer())) {
+            sommet = this.getStationTrier().stream().filter(s -> !s.isMarquer()).min(Comparator.comparingInt(s -> distanceMinimale.get(s.getNom()) )).get();
+            sommet.setMarquer(true);
+
+            for (Arete arete : sommet.getAretes()) {
+                if(arete.getSommet1() != sommet )  {
+                    if(  distanceMinimale.get(arete.getSommet1().getNom()) > distanceMinimale.get(sommet.getNom())  + arete.getTempsEnSecondes()) {
+                        distanceMinimale.put(arete.getSommet1().getNom(), distanceMinimale.get(sommet.getNom())  + arete.getTempsEnSecondes());
+                        predecesseur.put(arete.getSommet1().getNom(), sommet);
+                    }
+                }
+                else if(arete.getSommet2() != sommet )  {
+                    if(  distanceMinimale.get(arete.getSommet2().getNom()) > distanceMinimale.get(sommet.getNom())  + arete.getTempsEnSecondes()) {
+                        distanceMinimale.put(arete.getSommet2().getNom(), distanceMinimale.get(sommet.getNom())  + arete.getTempsEnSecondes());
+                        predecesseur.put(arete.getSommet2().getNom(), sommet);
+                    }
+                }
+            }
+        }
+
+        Station arrive = this.getStationTrier().stream().filter(s -> s.getNom().equals(villeDArrive) ).findFirst().get();
+        Station prede = predecesseur.get(arrive.getNom());
+        String chemin = prede.getNom() + " -> " + arrive.getNom()  ;
+
+        while (prede != depart) {
+            prede = predecesseur.get(prede.getNom());
+            chemin =  prede.getNom() + " -> " + chemin;
+        }
+
+
+        Resultat resultat = new Resultat();
+        resultat.setChemin(chemin);
+        resultat.setPoids(Long.valueOf(distanceMinimale.get(arrive.getNom())));
+        return resultat;
+
+
+    }
+
     public boolean stationDejaExistante(String nom_sommet) {
         return stations.stream().anyMatch(station -> station.getNom().equals(nom_sommet));
     }
@@ -187,6 +252,9 @@ public class Graphe {
                     loadAretes(parts);
                 } else if (fileName.equals("/sommets.csv")) {
                     loadStations(parts);
+                }
+                else if (fileName.equals("/pospoints.csv")) {
+                    loadPosition(parts);
                 }
                 line = reader.readLine();
 

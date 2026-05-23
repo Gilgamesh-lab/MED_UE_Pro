@@ -14,8 +14,8 @@ public class Main {
         // 159 ; Lamarck Caulaincourt ;12 ;False; 0
         // 0000; Abbesses ;12 ;False; 0
         //0;159;46
-        Station Abbesses = new Station("Abbesses",0 , false,  0, "12");
-        Station LamarckCaulaincourt = new Station("Lamarck Caulaincourt",159 , false,  0, "12");
+        Station Abbesses = new Station("Abbesses", 0, false, 0, "12");
+        Station LamarckCaulaincourt = new Station("Lamarck Caulaincourt", 159, false, 0, "12");
 
         System.out.println(Abbesses.getVoisins());
         System.out.println(LamarckCaulaincourt.getVoisins());
@@ -33,13 +33,20 @@ public class Main {
         System.out.println(resultat.getChemin());
 
         System.out.println("");
-        if(graphe.getStations().stream().allMatch(station -> station.isMarquer())){
+        if (graphe.getStations().stream().allMatch(station -> station.isMarquer())) {
             System.out.println("Le graphe est connexe");
-        }
-        else{
+        } else {
             System.out.println("Le graphe n'est pas connexe");
         }
 
+        if (graphe.getStations().stream().allMatch(station -> station.getX() != 0 && station.getY() != 0)) {
+            System.out.println("Toutes les stations ont des coordonnées");
+        } else {
+            System.out.println("Des coordonnées pour certaines stations sont manquante");
+            graphe.getStations().stream()
+                    .filter(station -> station.getX() == 0 || station.getY() == 0)
+                    .forEach(station -> System.out.println(station.getNom()));
+        }
         System.out.println("");
         System.out.println("");
         ArrayList<Arete> aretes = graphe.getKruskal();
@@ -48,9 +55,15 @@ public class Main {
         System.out.println("Poids total du plus court chemin trouvé = " + (aretes.stream().mapToInt(arete2 -> arete2.getTempsEnSecondes()).sum()) / 360 + " heures");
 
 
+        System.out.println();
+        System.out.println("Algorithme de Dijkstra entre Maison Blanche et Villejuif Louis Aragon");
+        System.out.println();
+
+        System.out.println();
+        resultat = graphe.getDijkstra("Maison Blanche", "Villejuif, Louis Aragon");
+
+            System.out.println("Le chemin le plus court trouvé entre Maison Blanche et Villejuif, Louis Aragon avec l’algorithme de Dijkstra est : " + resultat.getChemin() + " avec un poids minimun de " + resultat.getPoids());
 
 
-
-
+        }
     }
-}

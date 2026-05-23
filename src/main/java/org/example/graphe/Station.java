@@ -15,6 +15,8 @@ public class Station {
         private String lignes; // lignes est un string à cause de la ligne 7bis
         private boolean si_terminus;
         private int branchement;
+        private int x;
+        private int y;
 
         public Station(String nom,int numero, boolean si_terminus,  int branchement, String lignes) {
             this.nom = nom;
@@ -25,11 +27,29 @@ public class Station {
             this.branchement = branchement;
             this.marquer = false;
             this.aretes = new ArrayList<Arete>();
+            this.x = 0;
+            this.y = 0;
         }
 
         public Station(String nom) {
             this.nom = nom;
         }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 
     public boolean isSi_terminus() {
         return si_terminus;

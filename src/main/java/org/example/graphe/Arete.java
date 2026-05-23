@@ -81,8 +81,6 @@ public class Arete {
         this.sommet2 = sommet2;
     }
 
-
-
     public Integer getTempsEnSecondes() {
         return tempsEnSecondes;
     }
