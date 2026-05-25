@@ -7,6 +7,8 @@ import org.example.graphe.Station;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import com.sun.net.httpserver.*;
 
@@ -84,6 +86,7 @@ public class Main {
         // creation serveur http
         HttpServer serveur = HttpServer.create(new InetSocketAddress(8080), 0);
 
+        // route pour obtenir le chemin
         serveur.createContext("/chemin", exchange -> {
             // evite de bloquer les requêtes du front end
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
@@ -114,8 +117,75 @@ public class Main {
             os.close();
         });
 
+        // route pour obtenir les points du graphe
+        serveur.createContext("/points", exchange -> {
+            // evite de bloquer les requêtes du front end + précise le type du contenu
+            // envoyé en front
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().add("Content-Type", "text/csv");
+
+            // renvoie le résultat
+            byte[] response = Files.readAllBytes(Paths.get("src/main/resources/pospoints.csv"));
+            exchange.sendResponseHeaders(200, response.length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response);
+            os.close();
+        });
+
+        // route pour obtenir les aretes du graphe
+        serveur.createContext("/aretes", exchange -> {
+            // evite de bloquer les requêtes du front end + précise le type du contenu
+            // envoyé en front
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().add("Content-Type", "text/csv");
+
+            // renvoie le résultat
+            byte[] response = Files.readAllBytes(Paths.get("src/main/resources/aretes.csv"));
+            exchange.sendResponseHeaders(200, response.length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response);
+            os.close();
+
+        });
+
+        // route pour obtenir les sommets du graphe
+        serveur.createContext("/sommets", exchange -> {
+
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().add("Content-Type", "text/csv");
+
+            // renvoie le résultat
+            byte[] response = Files.readAllBytes(Paths.get("src/main/resources/sommets.csv"));
+            exchange.sendResponseHeaders(200, response.length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response);
+            os.close();
+        });
+
+        // route pour vérifier connexité
+        serveur.createContext("/connexite", exchange -> {
+            // évite de bloquer les requêtes du front end
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+
+            // verifie si le graphe est connexe
+            Graphe newGraphe = new Graphe();
+            String isConnexe;
+            newGraphe.getBFS("Bastille");
+            if (newGraphe.getStations().stream().allMatch(station -> station.isMarquer())) {
+                isConnexe = "true";
+            } else {
+                isConnexe = "false";
+            }
+
+            // renvoie le résultat
+            byte[] response = isConnexe.getBytes();
+            exchange.sendResponseHeaders(200, response.length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(response);
+            os.close();
+        });
+
         serveur.start();
         System.out.println("the server is running on port 8080 :D");
-
     }
 }
