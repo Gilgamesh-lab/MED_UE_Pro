@@ -1,5 +1,7 @@
 package org.example;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.example.graphe.Arete;
 import org.example.graphe.Graphe;
 import org.example.graphe.Resultat;
@@ -113,6 +115,37 @@ public class Main {
             os.write(response);
             os.close();
         });
+
+        // Endpoint pour le calcul de l'ACPM (Algorithme de Kruskal)
+        serveur.createContext("/acpm", exchange -> {
+            // evite de bloquer les requêtes du front end
+            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            // calcule l'ACPM
+            Graphe newGraphe = new Graphe();
+            ArrayList<Arete> aretes = newGraphe.getKruskal();
+
+            // convertit les arêtes en JSON
+            Gson gson = new GsonBuilder().create();
+            String response = gson.toJson(aretes);
+
+            // renvoie le résultat
+            byte[] responseBytes = response.getBytes();
+            exchange.sendResponseHeaders(200, responseBytes.length);
+            OutputStream os = exchange.getResponseBody();
+            os.write(responseBytes);
+            os.close();
+        });
+
+
 
         serveur.start();
         System.out.println("the server is running on port 8080 :D");
